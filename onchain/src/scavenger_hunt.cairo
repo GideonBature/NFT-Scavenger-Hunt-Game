@@ -2,7 +2,8 @@
 mod ScavengerHunt {
     use starknet::ContractAddress;
     use starknet::storage::{
-        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map, StorageMapReadAccess, StorageMapWriteAccess
+        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map,
+        StorageMapReadAccess, StorageMapWriteAccess
     };
     use onchain::interface::{IScavengerHunt, Question, Levels, PlayerProgress, LevelProgress};
 
@@ -84,21 +85,29 @@ mod ScavengerHunt {
             assert!(!player_progress.is_initialized, "Player already initialized");
 
             // initialize player progess
-            self.player_progress.write(player_address, PlayerProgress {
-                address: player_address,
-                current_level: Levels::Easy,
-                is_initialized: true
-            });
+            self
+                .player_progress
+                .write(
+                    player_address,
+                    PlayerProgress {
+                        address: player_address, current_level: Levels::Easy, is_initialized: true
+                    }
+                );
 
             // set player current level
-            self.player_level_progress.write((player_address, Levels::Easy.into()), LevelProgress {
-                player: player_address,
-                level: Levels::Easy,
-                last_question_index: 0,
-                is_completed: false,
-                attempts: 0,
-                nft_minted: false
-            });
+            self
+                .player_level_progress
+                .write(
+                    (player_address, Levels::Easy.into()),
+                    LevelProgress {
+                        player: player_address,
+                        level: Levels::Easy,
+                        last_question_index: 0,
+                        is_completed: false,
+                        attempts: 0,
+                        nft_minted: false
+                    }
+                );
         }
     }
 }
