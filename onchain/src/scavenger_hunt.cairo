@@ -2,7 +2,7 @@
 mod ScavengerHunt {
     use starknet::ContractAddress;
     use starknet::storage::{
-        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map,
+        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map, StorageMapReadAccess, StorageMapWriteAccess
     };
     use onchain::interface::{IScavengerHunt, Question, Levels, PlayerProgress, LevelProgress};
 
@@ -14,7 +14,7 @@ mod ScavengerHunt {
         question_per_level: u8,
         player_progress: Map<ContractAddress, PlayerProgress>,
         player_level_progress: Map<
-            (ContractAddress, Levels), LevelProgress,
+            (ContractAddress, felt252), LevelProgress,
         > // (user, level) -> LevelProgress
     }
 
@@ -76,6 +76,29 @@ mod ScavengerHunt {
 
         fn get_question_per_level(self: @ContractState, amount: u8) -> u8 {
             self.question_per_level.read()
+        }
+
+        fn initialize_player_progress(ref self: ContractState, player_address: ContractAddress) {
+            let player_progress = self.player_progress.entry(player_address).read();
+
+            assert!(!player_progress.is_initialized, "Player already initialized");
+
+            // initialize player progess
+            self.player_progress.write(player_address, PlayerProgress {
+                address: player_address,
+                current_level: Levels::Easy,
+                is_initialized: true
+            });
+
+            // set player current level
+            self.player_level_progress.write((player_address, Levels::Easy.into()), LevelProgress {
+                player: player_address,
+                level: Levels::Easy,
+                last_question_index: 0,
+                is_completed: false,
+                attempts: 0,
+                nft_minted: false
+            });
         }
     }
 }
