@@ -1,5 +1,6 @@
 #[starknet::contract]
 mod ScavengerHunt {
+    use starknet::event::EventEmitter;
     use starknet::ContractAddress;
     use starknet::storage::{
         StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map,
@@ -23,12 +24,20 @@ mod ScavengerHunt {
     #[derive(Drop, starknet::Event)]
     pub enum Event {
         QuestionAdded: QuestionAdded,
+        PlayerInitialized: PlayerInitialized
     }
 
     #[derive(Drop, starknet::Event)]
     pub struct QuestionAdded {
         pub question_id: u64,
         pub level: Levels,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    pub struct PlayerInitialized {
+        pub player_address: ContractAddress,
+        pub level: felt252,
+        pub is_initialized: bool
     }
 
     #[constructor]
@@ -108,6 +117,8 @@ mod ScavengerHunt {
                         nft_minted: false
                     }
                 );
+
+            self.emit(PlayerInitialized { player_address, level: 'EASY', is_initialized: true });
         }
     }
 }
