@@ -17,6 +17,7 @@ pub trait IScavengerHunt<TContractState> {
         self: @TContractState, question_id: u64,
     ) -> ByteArray; // request hint for a question
     fn get_question_in_level(self: @TContractState, level: Levels, index: u8) -> ByteArray;
+    fn initialize_player_progress(ref self: TContractState, player_address: ContractAddress);
 }
 
 #[derive(Drop, Serde, starknet::Store)]
