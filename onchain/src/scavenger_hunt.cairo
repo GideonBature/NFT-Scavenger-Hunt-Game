@@ -4,6 +4,7 @@ mod ScavengerHunt {
     use starknet::storage::{
         StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map,
         StorageMapReadAccess, StorageMapWriteAccess
+    };
     use starknet::{ContractAddress, get_caller_address};
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::access::accesscontrol::AccessControlComponent;
@@ -35,19 +36,18 @@ mod ScavengerHunt {
         player_progress: Map<ContractAddress, PlayerProgress>,
         player_level_progress: Map<
             (ContractAddress, felt252), LevelProgress,
-        > // (user, level) -> LevelProgress
+        >, // (user, level) -> LevelProgress
         #[substorage(v0)]
         accesscontrol: AccessControlComponent::Storage,
         #[substorage(v0)]
         src5: SRC5Component::Storage,
-
     }
 
     #[event]
     #[derive(Drop, starknet::Event)]
     pub enum Event {
         QuestionAdded: QuestionAdded,
-        PlayerInitialized: PlayerInitialized
+        PlayerInitialized: PlayerInitialized,
         #[flat]
         AccessControlEvent: AccessControlComponent::Event,
         #[flat]
